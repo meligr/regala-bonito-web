@@ -1,0 +1,11 @@
+[
+  { "id": "luncheras", "name": "Cajitas Luncheras" },
+  { "id": "milk", "name": "Cajitas Milk" },
+  { "id": "bolsas", "name": "Bolsas de Regalo" },
+  { "id": "party", "name": "Party Favor Boxes" },
+  { "id": "gorros", "name": "Gorros, Coronas y Gafas" },
+  { "id": "articulos", "name": "Artículos de cumpleaños" },
+  { "id": "banderines", "name": "Banderines" },
+  { "id": "invitaciones", "name": "Invitaciones" },
+  { "id": "toppers", "name": "Toppers" }
+]

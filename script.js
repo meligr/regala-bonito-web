@@ -1,0 +1,873 @@
+/*
+  Project:      Regala Bonito - El Arte de Regalar
+  Description:  Client logic for the Luxe Celebration boutique app.
+                Handles catalog filtering, persistent shopping cart, drawer toggles,
+                toast notifications, and WhatsApp order generator.
+*/
+
+// Initialize cart from localStorage with defensive error handling
+let cart = [];
+try {
+  const stored = localStorage.getItem("regala_bonito_cart");
+  if (stored) {
+    cart = JSON.parse(stored);
+  }
+} catch (e) {
+  cart = [];
+}
+
+// WhatsApp phone contact (Montevideo, Uruguay international format)
+const WHATSAPP_PHONE = "59899123456";
+
+// Catalog data sources
+const CATALOG_URLS = {
+  categories: "data/categories.json",
+  products: "data/products.json",
+};
+
+// Inline placeholder used when a product image cannot be loaded
+const PLACEHOLDER_IMAGE = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 545" role="img" aria-label="Imagen no disponible">
+  <rect width="600" height="545" fill="#f5eedf"/>
+  <g fill="none" stroke="#c5a043" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="195" y="230" width="210" height="155" rx="16"/>
+    <path d="M300 230v155M195 285h210"/>
+    <path d="M300 230c-26-46-92-46-92-6 0 29 51 21 92 6zM300 230c26-46 92-46 92-6 0 29-51 21-92 6z"/>
+  </g>
+  <text x="300" y="445" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#947413">Imagen no disponible</text>
+</svg>
+`)}`;
+
+// Catalog state
+let catalogProducts = [];
+let activeCategory = "all";
+let itemsToShow = 6;
+
+/**
+ * Formats a numeric value using the catalog currency.
+ * @param {number|string} value
+ * @returns {string}
+ */
+function formatPrice(value) {
+  const amount = Number(value);
+  return `${Number.isFinite(amount) ? amount.toFixed(2) : "0.00"} CUP`;
+}
+
+/**
+ * Escapes text before inserting it into an HTML template.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
+/**
+ * Displays an elegant non-blocking boutique toast message
+ * @param {string} message - Notification text
+ * @param {'info' | 'success' | 'error'} type - Style modifier
+ */
+function showToast(message, type = "info") {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast--${type}`;
+
+  const iconName =
+    type === "error" ? "error" : type === "success" ? "check_circle" : "info";
+  toast.innerHTML = `
+    <span class="material-symbols-outlined toast__icon">${iconName}</span>
+    <span>${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(-10px)";
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+      }
+    }, 300);
+  }, 4000);
+}
+
+/**
+ * Toggles the sliding animation on the cart drawer.
+ */
+function toggleCart() {
+  const cartSidebar = document.getElementById("cart-sidebar");
+  const cartOverlay = document.getElementById("cart-overlay");
+  if (!cartSidebar || !cartOverlay) return;
+
+  const isClosed = !cartSidebar.classList.contains("cart-sidebar--active");
+
+  if (isClosed) {
+    cartSidebar.classList.add("cart-sidebar--active");
+    cartOverlay.classList.add("cart-overlay--active");
+    document.body.style.overflow = "hidden";
+    renderCart();
+  } else {
+    cartSidebar.classList.remove("cart-sidebar--active");
+    cartOverlay.classList.remove("cart-overlay--active");
+    document.body.style.overflow = "";
+  }
+}
+
+/**
+ * Toggles the mobile navigation slide-out menu drawer.
+ */
+function toggleMobileMenu() {
+  const mobileMenuSidebar = document.getElementById("mobile-menu-sidebar");
+  const mobileMenuOverlay = document.getElementById("mobile-menu-overlay");
+  if (!mobileMenuSidebar || !mobileMenuOverlay) return;
+
+  const isClosed = !mobileMenuSidebar.classList.contains(
+    "mobile-menu-sidebar--active",
+  );
+
+  if (isClosed) {
+    mobileMenuSidebar.classList.add("mobile-menu-sidebar--active");
+    mobileMenuOverlay.classList.add("mobile-menu-overlay--active");
+    document.body.style.overflow = "hidden";
+  } else {
+    mobileMenuSidebar.classList.remove("mobile-menu-sidebar--active");
+    mobileMenuOverlay.classList.remove("mobile-menu-overlay--active");
+    document.body.style.overflow = "";
+  }
+}
+
+/**
+ * Builds the category filter buttons from the categories JSON.
+ * @param {Array<{id: string, name: string}>} categories
+ */
+function renderCategories(categories) {
+  const container = document.getElementById("category-filters");
+  if (!container) return;
+
+  const normalizedCategories = categories
+    .filter((category) => category && category.id && category.name)
+    .map((category) => ({
+      id: String(category.id),
+      name: String(category.name),
+    }));
+
+  const items = [{ id: "all", name: "Todos" }, ...normalizedCategories];
+
+  container.innerHTML = items
+    .map((category) => {
+      const isActive = category.id === activeCategory;
+      return `
+      <button type="button"
+              class="catalog__filter-btn${isActive ? " catalog__filter-btn--active" : ""}"
+              data-category="${escapeHtml(category.id)}"
+              role="tab"
+              aria-selected="${isActive}">
+        ${escapeHtml(category.name)}
+      </button>
+    `;
+    })
+    .join("");
+}
+
+/**
+ * Creates the markup for a single product card.
+ * @param {{id?: string, name?: string, description?: string, price?: number, category_id?: string, image_url?: string}} product
+ * @returns {string}
+ */
+function createProductCard(product) {
+  const name = String(product.name ?? "Producto");
+  const description = String(product.description ?? "");
+  const price = Number(product.price);
+  const safePrice = Number.isFinite(price) ? price : 0;
+  const safeName = escapeHtml(name);
+  const safeDescription = escapeHtml(description);
+  const safeId = escapeHtml(product.id ?? "");
+  const safeCategory = escapeHtml(product.category_id ?? "");
+  const imageUrl = product.image_url
+    ? escapeHtml(product.image_url)
+    : PLACEHOLDER_IMAGE;
+
+  return `
+    <article class="product-card"
+             data-category="${safeCategory}"
+             data-product-id="${safeId}"
+             data-product-name="${safeName}"
+             data-product-price="${safePrice}">
+      <div class="product-card__wrapper">
+        <img src="${imageUrl}"
+             alt="${safeName}"
+             class="product-card__image"
+             loading="lazy"
+             decoding="async">
+      </div>
+      <div class="product-card__body">
+        <h3 class="product-card__title">${safeName}</h3>
+        <p class="product-card__description">${safeDescription}</p>
+        <div class="product-card__footer">
+          <span class="product-card__price">${formatPrice(safePrice)}</span>
+          <button type="button"
+                  class="product-card__button"
+                  data-cart-action="add"
+                  data-product-name="${safeName}"
+                  data-product-price="${safePrice}"
+                  aria-label="Agregar ${safeName} al carrito">
+            <span class="material-symbols-outlined">add_shopping_cart</span> Agregar
+          </button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/**
+ * Renders the products that match the active category.
+ */
+function renderProducts() {
+  const grid = document.getElementById("product-grid");
+  const toggleBtn = document.getElementById("load-toggle-btn");
+  if (!grid) return;
+
+  const allFiltered =
+    activeCategory === "all"
+      ? catalogProducts
+      : catalogProducts.filter(
+          (product) => String(product.category_id) === activeCategory,
+        );
+
+  const productsToDisplay = allFiltered.slice(0, itemsToShow);
+
+  if (allFiltered.length === 0) {
+    grid.innerHTML =
+      '<p class="catalog__status">No hay productos disponibles en esta categoría.</p>';
+    if (toggleBtn) toggleBtn.style.display = "none";
+    return;
+  }
+
+  grid.innerHTML = productsToDisplay
+    .map((product) => createProductCard(product))
+    .join("");
+
+  // Lógica del botón inteligente (Camaleón)
+  if (toggleBtn) {
+    if (allFiltered.length <= 6) {
+      // Si hay 6 o menos productos, no hace falta el botón
+      toggleBtn.style.display = "none";
+    } else {
+      toggleBtn.style.display = "inline-block";
+
+      if (itemsToShow >= allFiltered.length) {
+        // Si ya se muestran todos, cambia a "Mostrar menos"
+        toggleBtn.innerHTML = "Mostrar menos ↑";
+      } else {
+        // Si faltan productos, se queda en "Ver más"
+        toggleBtn.innerHTML = "Ver más productos ↓";
+      }
+    }
+  }
+
+  // Swap broken images for the inline placeholder.
+  grid.querySelectorAll(".product-card__image").forEach((image) => {
+    const usePlaceholder = () => {
+      image.removeEventListener("error", usePlaceholder);
+      image.src = PLACEHOLDER_IMAGE;
+      image.classList.add("product-card__image--placeholder");
+    };
+    image.addEventListener("error", usePlaceholder);
+    if (image.complete && image.naturalWidth === 0) {
+      usePlaceholder();
+    }
+  });
+
+  updateCatalogCardControls();
+}
+
+/**
+ * Catalog filter categorization controller.
+ * @param {string} categoryName
+ */
+function filterCatalog(categoryName) {
+  activeCategory = categoryName || "all";
+  itemsToShow = 6;
+
+  document.querySelectorAll(".catalog__filter-btn").forEach((button) => {
+    const isActive = button.dataset.category === activeCategory;
+    button.classList.toggle("catalog__filter-btn--active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  renderProducts();
+}
+
+/**
+ * Wires the delegated listeners for the dynamically rendered catalog.
+ */
+function setupCatalogListeners() {
+  const filters = document.getElementById("category-filters");
+  if (filters) {
+    filters.addEventListener("click", (event) => {
+      const button = event.target.closest(".catalog__filter-btn");
+      if (!button || !filters.contains(button)) return;
+      filterCatalog(button.dataset.category);
+    });
+  }
+
+  const grid = document.getElementById("product-grid");
+  if (grid) {
+    grid.addEventListener("click", (event) => {
+      const control = event.target.closest("[data-cart-action]");
+      if (!control || !grid.contains(control)) return;
+
+      const productName = control.dataset.productName;
+      const action = control.dataset.cartAction;
+      if (!productName) return;
+
+      if (action === "add") {
+        addToCart(productName, Number(control.dataset.productPrice), control);
+      } else if (action === "increase") {
+        increaseQuantity(productName);
+      } else if (action === "decrease") {
+        decreaseQuantity(productName);
+      }
+    });
+  }
+}
+
+/**
+ * Fetches categories and products, then renders the catalog.
+ */
+async function loadCatalog() {
+  const grid = document.getElementById("product-grid");
+  if (grid) {
+    grid.innerHTML = '<p class="catalog__status">Cargando catálogo…</p>';
+  }
+
+  try {
+    const [categoriesResponse, productsResponse] = await Promise.all([
+      fetch(CATALOG_URLS.categories),
+      fetch(CATALOG_URLS.products),
+    ]);
+
+    if (!categoriesResponse.ok) {
+      throw new Error(
+        `No se pudieron cargar las categorías (HTTP ${categoriesResponse.status}).`,
+      );
+    }
+    if (!productsResponse.ok) {
+      throw new Error(
+        `No se pudieron cargar los productos (HTTP ${productsResponse.status}).`,
+      );
+    }
+
+    const [categoriesData, productsData] = await Promise.all([
+      categoriesResponse.json(),
+      productsResponse.json(),
+    ]);
+
+    const categories = Array.isArray(categoriesData) ? categoriesData : [];
+    catalogProducts = Array.isArray(productsData) ? productsData : [];
+
+    activeCategory = "all";
+    renderCategories(categories);
+    renderProducts();
+  } catch (error) {
+    console.error("Error al cargar el catálogo:", error);
+    if (grid) {
+      grid.innerHTML =
+        '<p class="catalog__status catalog__status--error">No se pudo cargar el catálogo. Verifica que los archivos data/categories.json y data/products.json estén disponibles y que el sitio se sirva por HTTP.</p>';
+    }
+  }
+}
+
+/**
+ * Appends or increments target element inside persistent local cart.
+ */
+function addToCart(itemName, itemPrice, btnElement) {
+  const matchedItem = cart.find((product) => product.name === itemName);
+
+  if (matchedItem) {
+    matchedItem.quantity += 1;
+  } else {
+    cart.push({
+      name: itemName,
+      price: itemPrice,
+      quantity: 1,
+    });
+  }
+
+  saveCartState();
+  updateCartIndicators();
+  renderCart();
+  renderCheckoutLiveSummary();
+  updateCatalogCardControls();
+
+  if (btnElement) {
+    const originalInner = btnElement.innerHTML;
+    btnElement.innerHTML = `<span class="material-symbols-outlined text-lg">check</span> Agregado`;
+    btnElement.style.backgroundColor = "var(--color-primary)";
+
+    setTimeout(() => {
+      btnElement.innerHTML = originalInner;
+      btnElement.style.backgroundColor = "";
+    }, 900);
+  }
+
+  showToast(`"${itemName}" agregado a tu pedido`, "success");
+}
+
+/**
+ * Decrements or removes targeted element item from active cart.
+ */
+function decreaseQuantity(itemName) {
+  const matchedItem = cart.find((product) => product.name === itemName);
+
+  if (matchedItem) {
+    matchedItem.quantity -= 1;
+    if (matchedItem.quantity <= 0) {
+      removeProduct(itemName);
+    } else {
+      saveCartState();
+      updateCartIndicators();
+      renderCart();
+      renderCheckoutLiveSummary();
+      updateCatalogCardControls();
+    }
+  }
+}
+
+/**
+ * Escalates targeted element quantity item count.
+ */
+function increaseQuantity(itemName) {
+  const matchedItem = cart.find((product) => product.name === itemName);
+
+  if (matchedItem) {
+    matchedItem.quantity += 1;
+    saveCartState();
+    updateCartIndicators();
+    renderCart();
+    renderCheckoutLiveSummary();
+    updateCatalogCardControls();
+  }
+}
+
+/**
+ * Completely excludes item from active cart.
+ */
+function removeProduct(itemName) {
+  cart = cart.filter((product) => product.name !== itemName);
+  saveCartState();
+  updateCartIndicators();
+  renderCart();
+  renderCheckoutLiveSummary();
+  updateCatalogCardControls();
+}
+
+/**
+ * Synchronizes internal system state data to header and mobile badges.
+ */
+function updateCartIndicators() {
+  const accumulatedUnits = cart.reduce(
+    (total, product) => total + product.quantity,
+    0,
+  );
+
+  const cartBadge = document.getElementById("cart-badge");
+  const cartBadgeMobile = document.getElementById("cart-badge-mobile");
+  const mobileMenuCartBadge = document.getElementById("mobile-menu-cart-badge");
+
+  if (cartBadge) {
+    cartBadge.innerText = accumulatedUnits;
+  }
+  if (cartBadgeMobile) {
+    cartBadgeMobile.innerText = accumulatedUnits;
+  }
+  if (mobileMenuCartBadge) {
+    mobileMenuCartBadge.innerText = accumulatedUnits;
+  }
+}
+
+/**
+ * Persists cart to localStorage.
+ */
+function saveCartState() {
+  try {
+    localStorage.setItem("regala_bonito_cart", JSON.stringify(cart));
+  } catch (e) {
+    // Graceful fallback for sandboxed iframes
+  }
+}
+
+/**
+ * Synchronizes catalog card selectors to display dynamic count dials when quantity > 0.
+ */
+function updateCatalogCardControls() {
+  document.querySelectorAll(".product-card").forEach((card) => {
+    const productName = card.getAttribute("data-product-name");
+    const productPrice = Number(card.getAttribute("data-product-price") || 0);
+    if (!productName) return;
+
+    const matchedItem = cart.find((product) => product.name === productName);
+    const footer = card.querySelector(".product-card__footer");
+    if (!footer) return;
+
+    const safeName = escapeHtml(productName);
+
+    if (matchedItem && matchedItem.quantity > 0) {
+      footer.innerHTML = `
+        <span class="product-card__price">${formatPrice(productPrice)}</span>
+        <div class="product-card__qty-selector">
+          <button type="button" class="product-card__qty-btn" data-cart-action="decrease" data-product-name="${safeName}" aria-label="Disminuir cantidad de ${safeName}">-</button>
+          <span class="product-card__qty-value">${matchedItem.quantity}</span>
+          <button type="button" class="product-card__qty-btn" data-cart-action="increase" data-product-name="${safeName}" aria-label="Aumentar cantidad de ${safeName}">+</button>
+        </div>
+      `;
+    } else {
+      footer.innerHTML = `
+        <span class="product-card__price">${formatPrice(productPrice)}</span>
+        <button type="button" class="product-card__button" data-cart-action="add" data-product-name="${safeName}" data-product-price="${productPrice}" aria-label="Agregar ${safeName} al carrito">
+          <span class="material-symbols-outlined text-lg">add_shopping_cart</span> Agregar
+        </button>
+      `;
+    }
+  });
+}
+
+/**
+ * Renders a live visual summary card in the checkout section.
+ */
+function renderCheckoutLiveSummary() {
+  const summaryBox = document.getElementById("checkout-summary-box");
+  if (!summaryBox) return;
+
+  if (cart.length === 0) {
+    summaryBox.innerHTML = `
+      <div class="checkout__summary-empty">
+        <span class="material-symbols-outlined checkout__summary-empty-icon">shopping_bag</span>
+        <p class="checkout__summary-empty-text">Tu selección está vacía</p>
+        <p class="checkout__summary-empty-subtext">Navega por nuestro catálogo superior y selecciona los elementos de tu agrado.</p>
+        <a href="#catalog" class="checkout__summary-explore-btn">Ver Catálogo</a>
+      </div>
+    `;
+    return;
+  }
+
+  let calculatedSummary = 0;
+  const itemsHtml = cart
+    .map((item) => {
+      const cumulativeCost = item.price * item.quantity;
+      calculatedSummary += cumulativeCost;
+
+      return `
+      <div class="checkout__summary-item">
+        <div class="checkout__summary-item-info">
+          <span class="checkout__summary-item-name">${item.name}</span>
+          <span class="checkout__summary-item-subtotal">${formatPrice(cumulativeCost)}</span>
+        </div>
+        <div class="checkout__summary-item-ops">
+          <button type="button" onclick="decreaseQuantity('${item.name}')" class="checkout__summary-op-btn" aria-label="Decrease quantity">-</button>
+          <span class="checkout__summary-op-val">${item.quantity}</span>
+          <button type="button" onclick="increaseQuantity('${item.name}')" class="checkout__summary-op-btn" aria-label="Increase quantity">+</button>
+          <button type="button" onclick="removeProduct('${item.name}')" class="checkout__summary-remove" aria-label="Remove item">
+            <span class="material-symbols-outlined text-base">delete</span>
+          </button>
+        </div>
+      </div>
+    `;
+    })
+    .join("");
+
+  summaryBox.innerHTML = `
+    <div class="checkout__summary-list">
+      ${itemsHtml}
+    </div>
+    <div class="checkout__summary-total">
+      <span class="checkout__summary-total-label">Total Estimado</span>
+      <span class="checkout__summary-total-value">${formatPrice(calculatedSummary)}</span>
+    </div>
+  `;
+}
+
+/**
+ * Renders the cart drawer details.
+ */
+function renderCart() {
+  const cartItemsContainer = document.getElementById("cart-items");
+  const cartTotalValue = document.getElementById("cart-total");
+  if (!cartItemsContainer) return;
+
+  if (cart.length === 0) {
+    cartItemsContainer.innerHTML = `
+      <div class="cart-empty-state">
+        <span class="material-symbols-outlined cart-empty-state__icon">shopping_basket</span>
+        <p>Tu carrito está vacío. Elige detalles únicos del catálogo.</p>
+      </div>
+    `;
+    if (cartTotalValue) {
+      cartTotalValue.innerText = formatPrice(0);
+    }
+    return;
+  }
+
+  let calculatedSummary = 0;
+  cartItemsContainer.innerHTML = cart
+    .map((item) => {
+      const cumulativeCost = item.price * item.quantity;
+      calculatedSummary += cumulativeCost;
+
+      return `
+      <div class="cart-item">
+        <div class="cart-item__info">
+          <h4 class="cart-item__title">${item.name}</h4>
+          <p class="cart-item__price">${formatPrice(cumulativeCost)}</p>
+        </div>
+        <div class="cart-item__controls">
+          <button onclick="decreaseQuantity('${item.name}')" class="cart-item__btn" aria-label="Decrease quantity">-</button>
+          <span class="cart-item__quantity">${item.quantity}</span>
+          <button onclick="increaseQuantity('${item.name}')" class="cart-item__btn" aria-label="Increase quantity">+</button>
+        </div>
+        <button onclick="removeProduct('${item.name}')" class="cart-item__remove-btn" aria-label="Remove item">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      </div>
+    `;
+    })
+    .join("");
+
+  if (cartTotalValue) {
+    cartTotalValue.innerText = formatPrice(calculatedSummary);
+  }
+}
+
+/**
+ * Formats YYYY-MM-DD date to DD/MM/YYYY.
+ */
+function formatDateSpanish(originalDate) {
+  if (!originalDate) return "";
+  const dateCollection = originalDate.split("-");
+  if (dateCollection.length !== 3) return originalDate;
+  return `${dateCollection[2]}/${dateCollection[1]}/${dateCollection[0]}`;
+}
+
+/**
+ * Validates checkout inputs and compiles order into WhatsApp redirect.
+ */
+function sendOrderToWhatsApp() {
+  const nameEl = document.getElementById("cust-name");
+  const phoneEl = document.getElementById("cust-phone");
+  const pickupEl = document.getElementById("pickup-info");
+  const dateEl = document.getElementById("event-date");
+  const notesEl = document.getElementById("order-notes");
+
+  const clientName = nameEl ? nameEl.value.trim() : "";
+  const clientPhone = phoneEl ? phoneEl.value.trim() : "";
+  const pickupDelivery = pickupEl ? pickupEl.value : "retiro";
+  const rawEventDate = dateEl ? dateEl.value : "";
+  const userComments = notesEl ? notesEl.value.trim() : "";
+
+  if (!clientName || !clientPhone || !rawEventDate) {
+    showToast(
+      "Por favor completa todos los campos obligatorios (*) de tus datos.",
+      "error",
+    );
+    if (!clientName && nameEl) nameEl.focus();
+    else if (!clientPhone && phoneEl) phoneEl.focus();
+    else if (!rawEventDate && dateEl) dateEl.focus();
+    return;
+  }
+
+  if (cart.length === 0) {
+    showToast(
+      "Tu pedido está vacío. Por favor selecciona artículos de nuestro catálogo antes de confirmar.",
+      "error",
+    );
+    const catalogEl = document.getElementById("catalog");
+    if (catalogEl) catalogEl.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  const formattedSpanishDate = formatDateSpanish(rawEventDate);
+  const pickupFormatted =
+    pickupDelivery === "retiro"
+      ? "Retiro en Local (Montevideo)"
+      : "Envío Privado a Domicilio";
+
+  let messageBody = `*Nuevo Pedido - Regala Bonito*\n\n`;
+  messageBody += `*Cliente:* ${clientName}\n`;
+  messageBody += `*WhatsApp:* ${clientPhone}\n`;
+  messageBody += `*Opción de Entrega:* ${pickupFormatted}\n`;
+  messageBody += `*Fecha de Evento:* ${formattedSpanishDate}\n`;
+  messageBody += `*Notas Especiales:* ${userComments || "Sin comentarios adicionales."}\n\n`;
+  messageBody += `*DETALLES DEL PEDIDO:*\n`;
+
+  let totalValuation = 0;
+  cart.forEach((catalogItem) => {
+    const lineCost = catalogItem.price * catalogItem.quantity;
+    messageBody += `- ${catalogItem.quantity}x ${catalogItem.name} (${formatPrice(lineCost)})\n`;
+    totalValuation += lineCost;
+  });
+
+  messageBody += `\n*TOTAL ESTIMADO DEL PEDIDO: ${formatPrice(totalValuation)}*`;
+
+  const waURL = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(messageBody)}`;
+
+  // Open WhatsApp in new tab with fallback for iframe restrictions
+  const link = document.createElement("a");
+  link.href = waURL;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  showToast(
+    "¡Pedido compilado! Abriendo WhatsApp para coordinar tu entrega...",
+    "success",
+  );
+}
+
+// Bind all critical functions immediately to window for inline onclick handlers
+window.toggleCart = toggleCart;
+window.toggleMobileMenu = toggleMobileMenu;
+window.filterCatalog = filterCatalog;
+window.addToCart = addToCart;
+window.decreaseQuantity = decreaseQuantity;
+window.increaseQuantity = increaseQuantity;
+window.removeProduct = removeProduct;
+window.sendOrderToWhatsApp = sendOrderToWhatsApp;
+window.showToast = showToast;
+
+/**
+ * Initializes listeners, IntersectionObserver, and UI state.
+ */
+function initializeApp() {
+  // Mark document as JS ready so CSS can safely enable progressive enhancements
+  document.documentElement.classList.add("js-ready");
+
+  // Intersecting Scroll Reveal System for Luxury Transitions
+  const scrollObOptions = {
+    root: null,
+    rootMargin: "0px 0px -20px 0px",
+    threshold: 0.05,
+  };
+
+  const smoothRevealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, scrollObOptions);
+
+  // Bind sections and grids
+  const revealElements = document.querySelectorAll(
+    ".scroll-reveal, .scroll-reveal-container",
+  );
+  revealElements.forEach((revealable) => {
+    smoothRevealObserver.observe(revealable);
+
+    // Immediate fallback: reveal elements already in view
+    const rect = revealable.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      revealable.classList.add("revealed");
+    }
+  });
+
+  // Sticky header transition system
+  const header = document.querySelector(".header");
+  if (header) {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        header.classList.remove("header--transparent");
+      } else {
+        header.classList.add("header--transparent");
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+  }
+
+  // Mobile Category scroll indicator helper
+  const categoryScroller = document.querySelector(".catalog__scroller");
+  const scrollIndicator = document.querySelector(
+    ".catalog__scroll-indicator-mobile",
+  );
+  if (categoryScroller && scrollIndicator) {
+    categoryScroller.addEventListener(
+      "scroll",
+      () => {
+        if (categoryScroller.scrollLeft > 20) {
+          scrollIndicator.classList.add(
+            "catalog__scroll-indicator-mobile--hidden",
+          );
+        } else {
+          scrollIndicator.classList.remove(
+            "catalog__scroll-indicator-mobile--hidden",
+          );
+        }
+      },
+      { passive: true },
+    );
+  }
+
+  // Wire the dynamic catalog and load its data
+  setupCatalogListeners();
+
+  
+  const toggleBtn = document.getElementById("load-toggle-btn");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const allFiltered =
+        activeCategory === "all"
+          ? catalogProducts
+          : catalogProducts.filter(
+              (product) => String(product.category_id) === activeCategory,
+            );
+
+      if (itemsToShow >= allFiltered.length) {
+        // Si ya están todos, encogemos a 6 y subimos la pantalla
+        itemsToShow = 6;
+        renderProducts();
+
+        const catalogSection = document.getElementById("catalog");
+        if (catalogSection) {
+          catalogSection.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        // Si faltan, sumamos 6 más
+        itemsToShow += 6;
+        renderProducts();
+      }
+    });
+  }
+
+  loadCatalog();
+
+  // Sync initial metrics
+  updateCartIndicators();
+  renderCheckoutLiveSummary();
+}
+
+// Run immediately if DOM is already ready, or on DOMContentLoaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeApp);
+} else {
+  initializeApp();
+}

@@ -1,0 +1,42 @@
+[
+  { "id": "p1", "name": "Cajita lunchera mini", "description": "Medidas: 12x7x7cm. Totalmente personalizadas y adaptables a cualquier temática.", "price": 400, "category_id": "luncheras", "image_url": "placeholder.jpg" },
+  { "id": "p2", "name": "Cajita lunchera mediana", "description": "Medidas: 15 x 8 x 8 cm", "price": 450, "category_id": "luncheras", "image_url": "placeholder.jpg" },
+  { "id": "p3", "name": "Cajita lunchera grande", "description": "Medidas: 17 x 9 x 9 cm. Totalmente personalizadas y adaptables a cualquier temática.", "price": 500, "category_id": "luncheras", "image_url": "placeholder.jpg" },
+  
+  { "id": "p4", "name": "Milk Box mini simple", "description": "Medidas: 7 x 7 x 14cm. Incluye edad o letra. Color a escoger según disponibilidad.", "price": 350, "category_id": "milk", "image_url": "placeholder.jpg" },
+  { "id": "p5", "name": "Milk box mini", "description": "Medidas: 7 x 7 x 14cm (10cm de alto el área principal). Totalmente personalizadas y adaptables a cualquier temática.", "price": 400, "category_id": "milk", "image_url": "placeholder.jpg" },
+  { "id": "p6", "name": "Milk box mediana", "description": "Medidas: 8 x 8 x 17cm (13cm de alto el área principal). Totalmente personalizadas. Incluye fondo temático y elementos en 3D.", "price": 450, "category_id": "milk", "image_url": "placeholder.jpg" },
+  { "id": "p7", "name": "Milk box grande", "description": "Medidas: 9 x 9 x 17cm. Totalmente personalizadas. Incluye fondo temático y elementos en 3D.", "price": 500, "category_id": "milk", "image_url": "placeholder.jpg" },
+  
+  { "id": "p8", "name": "Bolsa de regalo", "description": "Tamaño: 20x13,5x8 cm", "price": 550, "category_id": "bolsas", "image_url": "placeholder.jpg" },
+  
+  { "id": "p9", "name": "Cajita pentagonal", "description": "Personalizable según la temática", "price": 300, "category_id": "party", "image_url": "placeholder.jpg" },
+  { "id": "p10", "name": "Mini cajita para souvenir o golosinas", "description": "Diseño ajustable a la temática de su elección", "price": 180, "category_id": "party", "image_url": "placeholder.jpg" },
+  
+  { "id": "p11", "name": "Gorro cumpleañero especial", "description": "Un accesorio único para un día especial. Gorro de cumpleaños elegante y personalizable.", "price": 1000, "category_id": "gorros", "image_url": "placeholder.jpg" },
+  { "id": "p12", "name": "Gorritos de cumpleaños", "description": "Elaborados en cartulina y se personalizan con la temática, colores o diseños de la celebración.", "price": 230, "category_id": "gorros", "image_url": "placeholder.jpg" },
+  
+  { "id": "p13", "name": "Centro de mesa", "description": "Adaptables a cualquier temática", "price": 900, "category_id": "articulos", "image_url": "placeholder.jpg" },
+  { "id": "p14", "name": "Personajes", "description": "Elaborados con cartulina y reforzados con soporte de cartón. 45cm.", "price": 800, "category_id": "articulos", "image_url": "placeholder.jpg" },
+  { "id": "p15", "name": "Carteles temáticos", "description": "30 x 45 cm, elaborados en cartulina de alta calidad. Personalizados con nombre, edad o frases.", "price": 850, "category_id": "articulos", "image_url": "placeholder.jpg" },
+  { "id": "p16", "name": "Cesta para dulces", "description": "Medidas: 15 x 15 cm", "price": 1500, "category_id": "articulos", "image_url": "placeholder.jpg" },
+  { "id": "p17", "name": "Regadera Decorativa Rosita Fresita", "description": "Diseño detallado y lleno de color para mesas dulces. Tamaño 25 cm aprox.", "price": 3000, "category_id": "articulos", "image_url": "placeholder.jpg" },
+  { "id": "p18", "name": "Cajitas de bufet personalizadas", "description": "Diseño personalizado", "price": 70, "category_id": "articulos", "image_url": "placeholder.jpg" },
+  
+  { "id": "p19", "name": "Banderines personalizados con nombre (Cartulina)", "description": "Personalizado según temática. (150 CUP cada letra).", "price": 180, "category_id": "banderines", "image_url": "placeholder.jpg" },
+  { "id": "p20", "name": "Banderines personalizados con nombre (Cartulina y foami)", "description": "Personalizado según temática. (200 CUP cada letra).", "price": 230, "category_id": "banderines", "image_url": "placeholder.jpg" },
+  { "id": "p21", "name": "Banderín Happy birthday temático", "description": "Cartulina. Personalizado según temática.", "price": 1500, "category_id": "banderines", "image_url": "placeholder.jpg" },
+  { "id": "p22", "name": "Banderín Feliz cumpleaños temático", "description": "Cartulina. Personalizado según temática.", "price": 1600, "category_id": "banderines", "image_url": "placeholder.jpg" },
+  
+  { "id": "p23", "name": "Invitaciones premium", "description": "Totalmente personalizadas. El precio puede ser variable según el diseño.", "price": 180, "category_id": "invitaciones", "image_url": "placeholder.jpg" },
+  { "id": "p24", "name": "Invitaciones", "description": "Cartulina. Medidas: 9x7cm", "price": 50, "category_id": "invitaciones", "image_url": "placeholder.jpg" },
+  { "id": "p25", "name": "Invitaciones digitales", "description": "Formato digital", "price": 350, "category_id": "invitaciones", "image_url": "placeholder.jpg" },
+  { "id": "p26", "name": "Invitación animada", "description": "Video + música", "price": 500, "category_id": "invitaciones", "image_url": "placeholder.jpg" },
+  
+  { "id": "p27", "name": "Topper cake personalizado temático", "description": "15-20cm. Incluye nombre y edad.", "price": 2000, "category_id": "toppers", "image_url": "placeholder.jpg" },
+  { "id": "p28", "name": "Topper cake sencillo foami", "description": "Incluye nombre y edad en doble capa. Material: foami escarchado. (120 CUP cada letra).", "price": 120, "category_id": "toppers", "image_url": "placeholder.jpg" },
+  { "id": "p29", "name": "Topper cake especial foami", "description": "Incluye nombre y edad. 15 a 20 cm aproximadamente.", "price": 1300, "category_id": "toppers", "image_url": "placeholder.jpg" },
+  { "id": "p30", "name": "Toppers personalizados para cupcake", "description": "Set de 12 toppers. Cartulina y foami, efecto 3D.", "price": 750, "category_id": "toppers", "image_url": "placeholder.jpg" },
+  { "id": "p31", "name": "Toppers corona para cupcake de foami y lazo", "description": "Set de 12 toppers para cupcake con diseño de corona y lazo.", "price": 650, "category_id": "toppers", "image_url": "placeholder.jpg" },
+  { "id": "p32", "name": "Toppers personalizados para cupcakes (Cartulina)", "description": "Set de 12 toppers personalizados según temática.", "price": 600, "category_id": "toppers", "image_url": "placeholder.jpg" }
+]
