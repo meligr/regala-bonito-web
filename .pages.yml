@@ -7,27 +7,24 @@ content:
     label: Catálogo de Productos
     type: file
     path: data/products.json
+    format: json   
+    list: true    
     fields:
-      - name: productos
-        label: Lista de Productos
-        type: object
-        list: true
-        fields:
-          - name: id
-            label: ID
-            type: string
-          - name: name
-            label: Nombre
-            type: string
-          - name: description
-            label: Descripción
-            type: text
-          - name: price
-            label: Precio
-            type: number
-          - name: category_id
-            label: Categoría ID
-            type: string
-          - name: image_url
-            label: Imagen
-            type: image
+      - name: id
+        label: ID
+        type: string
+      - name: name
+        label: Nombre
+        type: string
+      - name: description
+        label: Descripción
+        type: text
+      - name: price
+        label: Precio
+        type: number
+      - name: category_id
+        label: Categoría ID
+        type: string
+      - name: image_url
+        label: Imagen
+        type: image
