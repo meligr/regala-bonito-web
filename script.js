@@ -200,20 +200,28 @@ function createProductCard(product) {
   const safeDescription = escapeHtml(description);
   const safeId = escapeHtml(product.id ?? "");
   const safeCategory = escapeHtml(product.category_id ?? "");
-  const imageUrl = product.image_url
-    ? escapeHtml(product.image_url)
-    : PLACEHOLDER_IMAGE;
+
+  const isPlaceholder =
+    !product.image_url ||
+    product.image_url === "placeholder.jpg" ||
+    product.image_url.trim() === "";
+  const imageUrl = isPlaceholder
+    ? PLACEHOLDER_IMAGE
+    : escapeHtml(product.image_url);
+  const placeholderClass = isPlaceholder
+    ? " product-card__image--placeholder"
+    : "";
 
   return `
     <article class="product-card"
              data-category="${safeCategory}"
              data-product-id="${safeId}"
              data-product-name="${safeName}"
-             data-product-price="${safePrice}"
+             data-product-price="${safePrice}">
       <div class="product-card__wrapper">
         <img src="${imageUrl}"
              alt="${safeName}"
-             class="product-card__image"
+             class="product-card__image${placeholderClass}"
              loading="lazy"
              decoding="async">
       </div>
@@ -344,14 +352,14 @@ function setupCatalogListeners() {
         } else if (action === "decrease") {
           decreaseQuantity(productName);
         }
-        return; 
+        return;
       }
 
       const card = event.target.closest(".product-card");
       if (card) {
         const productId = card.dataset.productId;
         if (productId) {
-          window.openProductModal(productId); 
+          window.openProductModal(productId);
         }
       }
     });
