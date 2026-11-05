@@ -210,8 +210,6 @@ function createProductCard(product) {
              data-product-id="${safeId}"
              data-product-name="${safeName}"
              data-product-price="${safePrice}"
-             onclick="openProductModal('${safeId}')" 
-             style="cursor: pointer;">
       <div class="product-card__wrapper">
         <img src="${imageUrl}"
              alt="${safeName}"
@@ -334,18 +332,27 @@ function setupCatalogListeners() {
   if (grid) {
     grid.addEventListener("click", (event) => {
       const control = event.target.closest("[data-cart-action]");
-      if (!control || !grid.contains(control)) return;
-      event.stopPropagation();
-      const productName = control.dataset.productName;
-      const action = control.dataset.cartAction;
-      if (!productName) return;
+      if (control) {
+        const productName = control.dataset.productName;
+        const action = control.dataset.cartAction;
+        if (!productName) return;
 
-      if (action === "add") {
-        addToCart(productName, Number(control.dataset.productPrice), control);
-      } else if (action === "increase") {
-        increaseQuantity(productName);
-      } else if (action === "decrease") {
-        decreaseQuantity(productName);
+        if (action === "add") {
+          addToCart(productName, Number(control.dataset.productPrice), control);
+        } else if (action === "increase") {
+          increaseQuantity(productName);
+        } else if (action === "decrease") {
+          decreaseQuantity(productName);
+        }
+        return; 
+      }
+
+      const card = event.target.closest(".product-card");
+      if (card) {
+        const productId = card.dataset.productId;
+        if (productId) {
+          window.openProductModal(productId); 
+        }
       }
     });
   }

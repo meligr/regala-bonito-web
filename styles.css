@@ -681,6 +681,7 @@ textarea:focus-visible {
   transition: var(--transition-smooth);
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 
 .product-card:hover {
