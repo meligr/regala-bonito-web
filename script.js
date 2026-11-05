@@ -16,8 +16,8 @@ try {
   cart = [];
 }
 
-// WhatsApp phone contact (Montevideo, Uruguay international format)
-const WHATSAPP_PHONE = "59899123456";
+// WhatsApp phone contact
+const WHATSAPP_PHONE = "53782767";
 
 // Catalog data sources
 const CATALOG_URLS = {
@@ -209,7 +209,9 @@ function createProductCard(product) {
              data-category="${safeCategory}"
              data-product-id="${safeId}"
              data-product-name="${safeName}"
-             data-product-price="${safePrice}">
+             data-product-price="${safePrice}"
+             onclick="openProductModal('${safeId}')" 
+             style="cursor: pointer;">
       <div class="product-card__wrapper">
         <img src="${imageUrl}"
              alt="${safeName}"
@@ -333,7 +335,7 @@ function setupCatalogListeners() {
     grid.addEventListener("click", (event) => {
       const control = event.target.closest("[data-cart-action]");
       if (!control || !grid.contains(control)) return;
-
+      event.stopPropagation();
       const productName = control.dataset.productName;
       const action = control.dataset.cartAction;
       if (!productName) return;
@@ -675,26 +677,56 @@ function sendOrderToWhatsApp() {
   const dateEl = document.getElementById("event-date");
   const notesEl = document.getElementById("order-notes");
 
+  [nameEl, phoneEl, dateEl].forEach((el) => {
+    if (el) el.classList.remove("form-control--error");
+  });
+
   const clientName = nameEl ? nameEl.value.trim() : "";
   const clientPhone = phoneEl ? phoneEl.value.trim() : "";
   const pickupDelivery = pickupEl ? pickupEl.value : "retiro";
   const rawEventDate = dateEl ? dateEl.value : "";
   const userComments = notesEl ? notesEl.value.trim() : "";
 
-  if (!clientName || !clientPhone || !rawEventDate) {
-    showToast(
-      "Por favor completa todos los campos obligatorios (*) de tus datos.",
-      "error",
-    );
-    if (!clientName && nameEl) nameEl.focus();
-    else if (!clientPhone && phoneEl) phoneEl.focus();
-    else if (!rawEventDate && dateEl) dateEl.focus();
+  let hasErrors = false;
+
+  if (clientName.length < 4 || /^\d+$/.test(clientName)) {
+    showToast("Por favor, escribe tu nombre real (mínimo 4 letras).", "error");
+    if (nameEl) nameEl.classList.add("form-control--error");
+    hasErrors = true;
+  }
+
+  const phoneDigits = clientPhone.replace(/\D/g, "");
+  if (phoneDigits.length < 8) {
+    showToast("El WhatsApp debe tener al menos 8 números.", "error");
+    if (phoneEl) phoneEl.classList.add("form-control--error");
+    hasErrors = true;
+  }
+
+  if (!rawEventDate) {
+    showToast("Por favor, selecciona la fecha de tu evento.", "error");
+    if (dateEl) dateEl.classList.add("form-control--error");
+    hasErrors = true;
+  } else {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(rawEventDate + "T00:00:00");
+
+    if (selectedDate < today) {
+      showToast("La fecha del evento no puede ser en el pasado.", "error");
+      if (dateEl) dateEl.classList.add("form-control--error");
+      hasErrors = true;
+    }
+  }
+
+  if (hasErrors) {
+    const firstError = document.querySelector(".form-control--error");
+    if (firstError) firstError.focus();
     return;
   }
 
   if (cart.length === 0) {
     showToast(
-      "Tu pedido está vacío. Por favor selecciona artículos de nuestro catálogo antes de confirmar.",
+      "Tu pedido está vacío. Selecciona artículos antes de confirmar.",
       "error",
     );
     const catalogEl = document.getElementById("catalog");
@@ -705,7 +737,7 @@ function sendOrderToWhatsApp() {
   const formattedSpanishDate = formatDateSpanish(rawEventDate);
   const pickupFormatted =
     pickupDelivery === "retiro"
-      ? "Retiro en Local (Montevideo)"
+      ? "Retiro en Local"
       : "Envío Privado a Domicilio";
 
   let messageBody = `*Nuevo Pedido - Regala Bonito*\n\n`;
@@ -727,7 +759,6 @@ function sendOrderToWhatsApp() {
 
   const waURL = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(messageBody)}`;
 
-  // Open WhatsApp in new tab with fallback for iframe restrictions
   const link = document.createElement("a");
   link.href = waURL;
   link.target = "_blank";
@@ -736,11 +767,90 @@ function sendOrderToWhatsApp() {
   link.click();
   document.body.removeChild(link);
 
-  showToast(
-    "¡Pedido compilado! Abriendo WhatsApp para coordinar tu entrega...",
-    "success",
-  );
+  showToast("¡Pedido compilado! Abriendo WhatsApp...", "success");
 }
+
+/* ===== MODAL ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("product-modal");
+  const closeModalBtn = document.getElementById("close-modal");
+
+  if (modal) {
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener("click", () => modal.close());
+    }
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.close();
+    });
+  }
+});
+
+window.openProductModal = function (productId) {
+  const modal = document.getElementById("product-modal");
+  if (!modal) return;
+
+  const product = catalogProducts.find(
+    (p) => String(p.id) === String(productId),
+  );
+  if (!product) return;
+
+  const modalImg = document.getElementById("modal-img");
+  modalImg.onerror = function () {
+    this.onerror = null;
+    this.src = PLACEHOLDER_IMAGE;
+    this.classList.add("product-card__image--placeholder");
+  };
+  modalImg.src = product.image_url || PLACEHOLDER_IMAGE;
+  modalImg.classList.remove("product-card__image--placeholder");
+
+  document.getElementById("modal-title").textContent = product.name;
+  document.getElementById("modal-price").textContent = formatPrice(
+    product.price,
+  );
+  document.getElementById("modal-desc").textContent =
+    product.description || "Sin descripción adicional.";
+
+  const actionsContainer = document.getElementById("modal-actions-container");
+  const matchedItem = cart.find((item) => item.name === product.name);
+
+  if (matchedItem && matchedItem.quantity > 0) {
+    actionsContainer.innerHTML = `
+      <div class="product-modal__qty-selector">
+        <button type="button" class="product-modal__qty-btn" onclick="updateModalQuantity('${product.name}', -1)">-</button>
+        <span class="product-modal__qty-value">${matchedItem.quantity}</span>
+        <button type="button" class="product-modal__qty-btn" onclick="updateModalQuantity('${product.name}', 1)">+</button>
+      </div>
+    `;
+  } else {
+    actionsContainer.innerHTML = `
+      <button type="button" class="product-modal__btn" onclick="addFromModal('${product.name}', ${product.price}, '${product.id}')">
+        <span class="material-symbols-outlined">add_shopping_cart</span> Agregar al pedido
+      </button>
+    `;
+  }
+
+  modal.showModal();
+};
+
+window.addFromModal = function (name, price, id) {
+  addToCart(name, price, null);
+  window.openProductModal(id);
+};
+
+window.updateModalQuantity = function (name, change) {
+  const product = catalogProducts.find((p) => p.name === name);
+  if (!product) return;
+
+  if (change > 0) {
+    increaseQuantity(name);
+  } else {
+    decreaseQuantity(name);
+  }
+
+  updateCatalogCardControls();
+  window.openProductModal(product.id);
+};
 
 // Bind all critical functions immediately to window for inline onclick handlers
 window.toggleCart = toggleCart;
@@ -830,7 +940,6 @@ function initializeApp() {
   // Wire the dynamic catalog and load its data
   setupCatalogListeners();
 
-  
   const toggleBtn = document.getElementById("load-toggle-btn");
   if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
@@ -842,7 +951,6 @@ function initializeApp() {
             );
 
       if (itemsToShow >= allFiltered.length) {
-        // Si ya están todos, encogemos a 6 y subimos la pantalla
         itemsToShow = 6;
         renderProducts();
 
@@ -851,12 +959,17 @@ function initializeApp() {
           catalogSection.scrollIntoView({ behavior: "smooth" });
         }
       } else {
-        // Si faltan, sumamos 6 más
         itemsToShow += 6;
         renderProducts();
       }
     });
   }
+
+  document.querySelectorAll(".form-control").forEach((input) => {
+    input.addEventListener("input", () => {
+      input.classList.remove("form-control--error");
+    });
+  });
 
   loadCatalog();
 

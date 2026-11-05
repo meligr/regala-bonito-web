@@ -11,7 +11,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Regala Bonito - El Arte de Regalar</title>
+    <title>Regala Bonito</title>
 
     <!-- Favicon -->
     <link
@@ -22,7 +22,7 @@
 
     <!-- Preview for social media (Open Graph) -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Regala Bonito - El Arte de Regalar" />
+    <meta property="og:title" content="Regala Bonito" />
     <meta
       property="og:description"
       content="Papelería creativa y detalles para cumpleaños y celebraciones. Piezas personalizadas según la temática. Consulte nuestro catálogo."
@@ -37,7 +37,7 @@
 
     <!-- Preview for Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Regala Bonito - El Arte de Regalar" />
+    <meta name="twitter:title" content="Regala Bonito" />
     <meta
       name="twitter:description"
       content="Papelería creativa y detalles para cumpleaños y celebraciones. Piezas personalizadas según la temática. Consulte nuestro catálogo."
@@ -117,7 +117,6 @@
               />
             </svg>
           </div>
-          <span class="header__title">Regala Bonito</span>
         </div>
 
         <nav class="header__nav" aria-label="Main Navigation">
@@ -361,7 +360,7 @@
                   <div class="form-row">
                     <div class="form-group">
                       <label for="cust-name" class="form-label"
-                        >Nombre Completo *</label
+                        >Nombre Completo</label
                       >
                       <input
                         type="text"
@@ -375,13 +374,13 @@
 
                     <div class="form-group">
                       <label for="cust-phone" class="form-label"
-                        >WhatsApp de Contacto *</label
+                        >WhatsApp de Contacto</label
                       >
                       <input
                         type="tel"
                         id="cust-phone"
                         class="form-control"
-                        placeholder="Ej: +53 63677456"
+                        placeholder="Ej: +53 53782767"
                         required
                         autocomplete="tel"
                       />
@@ -391,7 +390,7 @@
                   <div class="form-row">
                     <div class="form-group">
                       <label for="pickup-info" class="form-label"
-                        >Modo de Entrega *</label
+                        >Modo de Entrega</label
                       >
                       <select id="pickup-info" class="form-select">
                         <option value="retiro">
@@ -403,7 +402,7 @@
 
                     <div class="form-group">
                       <label for="event-date" class="form-label"
-                        >Fecha del Evento *</label
+                        >Fecha del Evento</label
                       >
                       <input
                         type="date"
@@ -664,9 +663,9 @@
           >
         </button>
 
-        <!-- Direct Live WhatsApp boutique assistant -->
+        <!-- Direct Live WhatsApp assistant -->
         <a
-          href="https://wa.me/59899123456"
+          href="https://wa.me/53782767"
           target="_blank"
           rel="noopener noreferrer"
           class="mobile-menu-sidebar__wa-btn"
@@ -730,5 +729,25 @@
 
     <!-- Elegant Toast Notifications for Non-blocking Alerts -->
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
+  
+    <!-- Product Modal -->
+    <dialog id="product-modal" class="product-modal">
+      <div class="product-modal__content">
+        <button class="product-modal__close" id="close-modal" aria-label="Cerrar modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <img id="modal-img" src="" alt="Producto" class="product-modal__img">
+        <div class="product-modal__body">
+          <h2 id="modal-title" class="product-modal__title"></h2>
+          <p id="modal-price" class="product-modal__price"></p>
+          <p id="modal-desc" class="product-modal__desc"></p>
+          
+          <div id="modal-actions-container" style="width: 100%;"></div>
+          
+        </div>
+      </div>
+    </dialog>
+  
   </body>
+  
 </html>

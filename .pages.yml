@@ -1,0 +1,33 @@
+media:
+  input: assets/uploads
+  output: /assets/uploads
+
+content:
+  - name: catalogo
+    label: Catálogo de Productos
+    type: file
+    path: data/products.json
+    fields:
+      - name: productos
+        label: Lista de Productos
+        type: object
+        list: true
+        fields:
+          - name: id
+            label: ID
+            type: string
+          - name: name
+            label: Nombre
+            type: string
+          - name: description
+            label: Descripción
+            type: text
+          - name: price
+            label: Precio
+            type: number
+          - name: category_id
+            label: Categoría ID
+            type: string
+          - name: image_url
+            label: Imagen
+            type: image
