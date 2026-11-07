@@ -691,8 +691,9 @@ function sendOrderToWhatsApp() {
   const pickupEl = document.getElementById("pickup-info");
   const dateEl = document.getElementById("event-date");
   const notesEl = document.getElementById("order-notes");
+  const addressEl = document.getElementById("cust-address");
 
-  [nameEl, phoneEl, dateEl].forEach((el) => {
+  [nameEl, phoneEl, dateEl, addressEl].forEach((el) => {
     if (el) el.classList.remove("form-control--error");
   });
 
@@ -701,6 +702,7 @@ function sendOrderToWhatsApp() {
   const pickupDelivery = pickupEl ? pickupEl.value : "retiro";
   const rawEventDate = dateEl ? dateEl.value : "";
   const userComments = notesEl ? notesEl.value.trim() : "";
+  const shippingAddress = addressEl ? addressEl.value.trim() : "";
 
   let hasErrors = false;
 
@@ -725,12 +727,17 @@ function sendOrderToWhatsApp() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const selectedDate = new Date(rawEventDate + "T00:00:00");
-
     if (selectedDate < today) {
       showToast("La fecha del evento no puede ser en el pasado.", "error");
       if (dateEl) dateEl.classList.add("form-control--error");
       hasErrors = true;
     }
+  }
+
+  if (pickupDelivery === "envio" && shippingAddress.length < 5) {
+    showToast("Por favor, escribe una dirección de envío válida.", "error");
+    if (addressEl) addressEl.classList.add("form-control--error");
+    hasErrors = true;
   }
 
   if (hasErrors) {
@@ -759,6 +766,11 @@ function sendOrderToWhatsApp() {
   messageBody += `*Cliente:* ${clientName}\n`;
   messageBody += `*WhatsApp:* ${clientPhone}\n`;
   messageBody += `*Opción de Entrega:* ${pickupFormatted}\n`;
+
+  if (pickupDelivery === "envio") {
+    messageBody += `*Dirección de Envío:* ${shippingAddress}\n`;
+  }
+
   messageBody += `*Fecha de Evento:* ${formattedSpanishDate}\n`;
   messageBody += `*Notas Especiales:* ${userComments || "Sin comentarios adicionales."}\n\n`;
   messageBody += `*DETALLES DEL PEDIDO:*\n`;
@@ -885,7 +897,7 @@ function initializeApp() {
   // Mark document as JS ready so CSS can safely enable progressive enhancements
   document.documentElement.classList.add("js-ready");
 
-  // Intersecting Scroll Reveal System for Luxury Transitions
+  // Intersecting Scroll Reveal System for Transitions
   const scrollObOptions = {
     root: null,
     rootMargin: "0px 0px -20px 0px",
@@ -986,6 +998,25 @@ function initializeApp() {
     });
   });
 
+  const pickupInfo = document.getElementById("pickup-info");
+  const addressGroup = document.getElementById("address-group");
+  if (pickupInfo && addressGroup) {
+    pickupInfo.addEventListener("change", (e) => {
+      const addressInput = document.getElementById("cust-address");
+      if (e.target.value === "envio") {
+        addressGroup.style.display = "block";
+        if (addressInput) addressInput.setAttribute("required", "required");
+      } else {
+        addressGroup.style.display = "none";
+        if (addressInput) {
+          addressInput.removeAttribute("required");
+          addressInput.value = "";
+          addressInput.classList.remove("form-control--error");
+        }
+      }
+    });
+  }
+
   loadCatalog();
 
   // Sync initial metrics
@@ -999,3 +1030,14 @@ if (document.readyState === "loading") {
 } else {
   initializeApp();
 }
+
+// Register the Worker service for PWA
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => console.log("PWA: Service Worker registrado.", reg))
+      .catch((err) => console.log("PWA: Error al registrar.", err));
+  });
+}
+

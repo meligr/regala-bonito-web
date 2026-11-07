@@ -1,0 +1,21 @@
+{
+  "name": "Regala Bonito",
+  "short_name": "Regala Bonito",
+  "description": "El Arte de Regalar - Papelería creativa y detalles para cumpleaños.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdfbf9",
+  "theme_color": "#12100e",
+  "icons": [
+    {
+      "src": "assets/icono.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icono.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

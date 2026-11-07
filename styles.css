@@ -8,7 +8,7 @@
 
 /* ===== VARIABLES & DESIGN SYSTEM ===== */
 :root {
-  /* Brand Color Palette - Modern Boutique Champagne Theme */
+  /* Brand Color Palette - Modern Champagne Theme */
   --color-surface-bg: #fdfbf9;
   --color-surface-card: #ffffff;
   --color-surface-low: #f8f5f2;
@@ -922,14 +922,47 @@ textarea:focus-visible {
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 0.6875rem 1rem;
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-surface-low);
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-surface-container);
+  border-radius: var(--radius-md);
+  background-color: #ffffff;
   font-family: var(--font-body);
-  font-size: 0.9375rem;
+  font-size: 0.85rem;
   color: var(--color-on-surface);
   transition: var(--transition-fast);
+}
+
+.form-control::placeholder,
+.form-textarea::placeholder {
+  color: #b5af9f; 
+  font-style: italic; 
+  font-weight: 300;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-primary-gold);
+  background-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 4px var(--color-gold-glow); 
+}
+
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23947413'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.5rem;
+  padding-right: 3rem; 
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical; 
+  min-height: 120px;
 }
 
 .form-control:focus,
@@ -948,12 +981,12 @@ textarea:focus-visible {
   padding: 1.125rem 2rem;
   background-color: var(--color-on-surface) !important;
   color: #ffffff !important;
-  border: none !important; /* Aquí quitamos el borde */
+  border: none !important; 
   font-family: var(--font-body);
   font-size: 0.9375rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   border-radius: var(--radius-full) !important;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
@@ -961,7 +994,7 @@ textarea:focus-visible {
 
 .checkout__submit-btn:hover {
   background-color: var(--color-whatsapp) !important;
-  border: none !important; /* Nos aseguramos de que no aparezca en hover */
+  border: none !important;
   color: #ffffff !important;
   transform: translateY(-3px);
   letter-spacing: 0.15em;
@@ -2142,7 +2175,9 @@ textarea:focus-visible {
   right: 1rem;
   background: transparent !important;
   border: none !important;
-  color: var(--color-primary) !important; /* Color café/dorado oscuro de tu marca */
+  color: var(
+    --color-primary
+  ) !important; /* Color café/dorado oscuro de tu marca */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2154,7 +2189,9 @@ textarea:focus-visible {
 }
 
 .product-modal__close:hover {
-  background: var(--color-surface-low) !important; /* Un circulito gris suave al pasar el mouse */
+  background: var(
+    --color-surface-low
+  ) !important; /* Un circulito gris suave al pasar el mouse */
   transform: scale(1.1);
 }
 
@@ -2316,10 +2353,4 @@ a,
 .product-card {
   user-select: none;
   -webkit-user-select: none;
-}
-
-button:focus,
-a:focus {
-  outline: 2px solid var(--color-primary-gold);
-  outline-offset: 2px;
 }
