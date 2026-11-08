@@ -453,7 +453,7 @@ function addToCart(itemName, itemPrice, btnElement) {
 
   if (btnElement) {
     const originalInner = btnElement.innerHTML;
-    btnElement.innerHTML = `<span class="material-symbols-outlined text-lg">check</span> Agregado`;
+    btnElement.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline; vertical-align:middle; margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg> Agregado`;
     btnElement.style.backgroundColor = "var(--color-primary)";
 
     setTimeout(() => {
@@ -594,7 +594,7 @@ function renderCheckoutLiveSummary() {
   if (cart.length === 0) {
     summaryBox.innerHTML = `
       <div class="checkout__summary-empty">
-        <span class="material-symbols-outlined checkout__summary-empty-icon">shopping_bag</span>
+        <svg width="40" height="40" fill="none" stroke="#c5a043" stroke-width="1.5" viewBox="0 0 24 24" style="opacity: 0.6; margin-bottom: 0.75rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
         <p class="checkout__summary-empty-text">Tu selección está vacía</p>
         <p class="checkout__summary-empty-subtext">Navega por nuestro catálogo superior y selecciona los elementos de tu agrado.</p>
         <a href="#catalog" class="checkout__summary-explore-btn">Ver Catálogo</a>
@@ -650,7 +650,7 @@ function renderCart() {
   if (cart.length === 0) {
     cartItemsContainer.innerHTML = `
       <div class="cart-empty-state">
-        <span class="material-symbols-outlined cart-empty-state__icon">shopping_basket</span>
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" style="color: rgba(197, 160, 67, 0.3); margin-bottom: 1rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
         <p>Tu carrito está vacío. Elige detalles únicos del catálogo.</p>
       </div>
     `;

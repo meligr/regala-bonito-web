@@ -258,7 +258,7 @@ textarea:focus-visible {
   left: 50%;
   width: 0;
   height: 1.5px;
-  background-color: var(--color-primary-gold);
+  background-color: var(--color-primary);
   transition: var(--transition-fast);
   transform: translateX(-50%);
 }
@@ -2027,7 +2027,7 @@ textarea:focus-visible {
 }
 
 .header--transparent .header__link:hover {
-  color: var(--color-primary-gold) !important;
+  color: var(--color-primary) !important;
 }
 
 .header--transparent .header__cart-button {
