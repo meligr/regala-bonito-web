@@ -1354,6 +1354,22 @@ textarea:focus-visible {
   letter-spacing: 0.05em;
 }
 
+@media (max-width: 767px) {
+  .footer__legal-links {
+    flex-direction: column; 
+    gap: 0.5rem;
+  }
+  
+  .footer__legal-links a {
+    font-size: 0.75rem; 
+    padding: 0.25rem 0;
+  }
+  
+  .footer__separator {
+    display: none; 
+  }
+}
+
 /* ===== MOBILE NAVIGATION MENU DRAWER SYSTEM ===== */
 .mobile-menu-overlay {
   position: fixed;
@@ -2394,9 +2410,78 @@ a,
   }
 }
 
-@media (max-width: 767px) {
-  .hero__image {
-    /* En móvil, enfoca la parte inferior de la imagen donde hay más detalle */
-    object-position: center 70%;
-  }
+
+/* ===== LEGAL PAGES AND 404 ===== */
+.legal-page, .error-page {
+  background-color: var(--color-surface-bg);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  line-height: 1.8;
+}
+
+.legal-container, .error-container {
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.legal-title, .error-title {
+  font-family: var(--font-display);
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+.legal-title {
+  font-size: 2.5rem;
+}
+
+.error-title {
+  font-size: 5rem;
+  text-align: center;
+}
+
+.legal-page h2 {
+  font-family: var(--font-display);
+  color: var(--color-primary);
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.legal-page p {
+  margin-bottom: 1rem;
+}
+
+.legal-back-btn {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.8rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  font-weight: bold;
+  transition: var(--transition-fast);
+}
+
+.legal-back-btn:hover {
+  background-color: var(--color-primary-gold);
+  transform: translateY(-2px);
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.error-text {
+  font-size: 1.2rem;
+  color: var(--color-on-surface-muted);
+}
+
+.error-subtext {
+  color: var(--color-on-surface-muted);
 }
