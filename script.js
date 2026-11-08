@@ -88,10 +88,17 @@ function showToast(message, type = "info") {
   const toast = document.createElement("div");
   toast.className = `toast toast--${type}`;
 
-  const iconName =
-    type === "error" ? "error" : type === "success" ? "check_circle" : "info";
+  let iconSvg = "";
+  if (type === "success") {
+    iconSvg = `<svg width="20" height="20" fill="none" stroke="#25d366" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>`;
+  } else if (type === "error") {
+    iconSvg = `<svg width="20" height="20" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/></svg>`;
+  } else {
+    iconSvg = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg>`;
+  }
+
   toast.innerHTML = `
-    <span class="material-symbols-outlined toast__icon">${iconName}</span>
+    ${iconSvg}
     <span>${message}</span>
   `;
 
@@ -177,8 +184,7 @@ function renderCategories(categories) {
       <button type="button"
               class="catalog__filter-btn${isActive ? " catalog__filter-btn--active" : ""}"
               data-category="${escapeHtml(category.id)}"
-              role="tab"
-              aria-selected="${isActive}">
+              aria-pressed="${isActive}">
         ${escapeHtml(category.name)}
       </button>
     `;
@@ -214,6 +220,7 @@ function createProductCard(product) {
 
   return `
     <article class="product-card"
+             tabindex="0" 
              data-category="${safeCategory}"
              data-product-id="${safeId}"
              data-product-name="${safeName}"
@@ -236,7 +243,7 @@ function createProductCard(product) {
                   data-product-name="${safeName}"
                   data-product-price="${safePrice}"
                   aria-label="Agregar ${safeName} al carrito">
-            <span class="material-symbols-outlined">add_shopping_cart</span> Agregar
+                  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Agregar
           </button>
         </div>
       </div>
@@ -360,6 +367,16 @@ function setupCatalogListeners() {
         const productId = card.dataset.productId;
         if (productId) {
           window.openProductModal(productId);
+        }
+      }
+    });
+
+    grid.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        const card = event.target.closest(".product-card");
+        if (card) {
+          event.preventDefault();
+          window.openProductModal(card.dataset.productId);
         }
       }
     });
@@ -511,6 +528,7 @@ function updateCartIndicators() {
 
   if (cartBadge) {
     cartBadge.innerText = accumulatedUnits;
+    cartBadge.style.display = accumulatedUnits === 0 ? "none" : "flex";
   }
   if (cartBadgeMobile) {
     cartBadgeMobile.innerText = accumulatedUnits;
@@ -559,7 +577,7 @@ function updateCatalogCardControls() {
       footer.innerHTML = `
         <span class="product-card__price">${formatPrice(productPrice)}</span>
         <button type="button" class="product-card__button" data-cart-action="add" data-product-name="${safeName}" data-product-price="${productPrice}" aria-label="Agregar ${safeName} al carrito">
-          <span class="material-symbols-outlined text-lg">add_shopping_cart</span> Agregar
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Agregar
         </button>
       `;
     }
@@ -602,7 +620,7 @@ function renderCheckoutLiveSummary() {
           <span class="checkout__summary-op-val">${item.quantity}</span>
           <button type="button" onclick="increaseQuantity('${item.name}')" class="checkout__summary-op-btn" aria-label="Increase quantity">+</button>
           <button type="button" onclick="removeProduct('${item.name}')" class="checkout__summary-remove" aria-label="Remove item">
-            <span class="material-symbols-outlined text-base">delete</span>
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg>
           </button>
         </div>
       </div>
@@ -660,7 +678,7 @@ function renderCart() {
           <button onclick="increaseQuantity('${item.name}')" class="cart-item__btn" aria-label="Increase quantity">+</button>
         </div>
         <button onclick="removeProduct('${item.name}')" class="cart-item__remove-btn" aria-label="Remove item">
-          <span class="material-symbols-outlined">delete</span>
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
         </button>
       </div>
     `;
@@ -852,7 +870,7 @@ window.openProductModal = function (productId) {
   } else {
     actionsContainer.innerHTML = `
       <button type="button" class="product-modal__btn" onclick="addFromModal('${product.name}', ${product.price}, '${product.id}')">
-        <span class="material-symbols-outlined">add_shopping_cart</span> Agregar al pedido
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Agregar al pedido
       </button>
     `;
   }
@@ -1017,6 +1035,20 @@ function initializeApp() {
     });
   }
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const cartSidebar = document.getElementById("cart-sidebar");
+      const menuSidebar = document.getElementById("mobile-menu-sidebar");
+      if (cartSidebar && cartSidebar.classList.contains("cart-sidebar--active"))
+        toggleCart();
+      if (
+        menuSidebar &&
+        menuSidebar.classList.contains("mobile-menu-sidebar--active")
+      )
+        toggleMobileMenu();
+    }
+  });
+
   loadCatalog();
 
   // Sync initial metrics
@@ -1040,4 +1072,3 @@ if ("serviceWorker" in navigator) {
       .catch((err) => console.log("PWA: Error al registrar.", err));
   });
 }
-

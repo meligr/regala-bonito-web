@@ -12,6 +12,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Regala Bonito</title>
+    <meta name="description" content="Papelería creativa y detalles para cumpleaños y celebraciones. Piezas personalizadas según la temática. Consulte nuestro catálogo.">
 
     <!-- Favicon -->
     <link
@@ -26,31 +27,18 @@
 
     <!-- Preview for social media (Open Graph) -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Regala Bonito" />
-    <meta
-      property="og:description"
-      content="Papelería creativa y detalles para cumpleaños y celebraciones. Piezas personalizadas según la temática. Consulte nuestro catálogo."
-    />
+    <meta property="og:title" content="Regala Bonito | El Arte de Regalar" />
+    <meta property="og:description" content="Papelería creativa y detalles para cumpleaños y celebraciones. Piezas personalizadas según la temática." />
     <meta property="og:url" content="https://regalabonito.pages.dev/" />
-    <meta
-      property="og:image"
-      content="https://regalabonito.pages.dev/assets/hero.png"
-    />
+    <meta property="og:image" content="https://regalabonito.pages.dev/assets/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
-    <!-- Preview for Twitter / X -->
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Regala Bonito" />
-    <meta
-      name="twitter:description"
-      content="Papelería creativa y detalles para cumpleaños y celebraciones. Piezas personalizadas según la temática. Consulte nuestro catálogo."
-    />
-    <meta
-      name="twitter:image"
-      content="https://regalabonito.pages.dev/assets/hero.png"
-    />
-
+    <meta name="twitter:title" content="Regala Bonito | El Arte de Regalar" />
+    <meta name="twitter:description" content="Papelería creativa y detalles para cumpleaños y celebraciones." />
+    <meta name="twitter:image" content="https://regalabonito.pages.dev/assets/og-image.jpg" />
     <link rel="apple-touch-icon" href="assets/icono.png" />
 
     <!-- Google Fonts Preconnect and Stylesheets -->
@@ -137,9 +125,7 @@
             onclick="toggleCart()"
             aria-label="View shopping cart drawer"
           >
-            <span class="material-symbols-outlined header__action-icon"
-              >shopping_bag</span
-            >
+            <svg class="header__action-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
             <span id="cart-badge" class="header__cart-badge">0</span>
           </button>
           <!-- Mobile Sidebar Hamburger Indicator -->
@@ -148,9 +134,7 @@
             onclick="toggleMobileMenu()"
             aria-label="Abrir menú de navegación"
           >
-            <span class="material-symbols-outlined header__action-icon"
-              >menu</span
-            >
+            <svg class="header__action-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
           </button>
         </div>
       </div>
@@ -163,7 +147,7 @@
         <div class="hero__background">
           <img
             class="hero__image"
-            src="assets/hero.png"
+            src="assets/hero.jpg"
             alt="A bright and elegant boutique celebratory layout showing luxury gift wraps and archways"
           />
           <div class="hero__overlay"></div>
@@ -189,9 +173,7 @@
             aria-label="Desplazarse al catálogo"
             class="hero__scroll-btn"
           >
-            <span class="material-symbols-outlined hero__scroll-arrow"
-              >keyboard_double_arrow_down</span
-            >
+            <svg class="hero__scroll-arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" /></svg>
           </a>
         </div>
       </section>
@@ -214,7 +196,6 @@
                 <div
                   id="category-filters"
                   class="catalog__filters"
-                  role="tablist"
                   aria-label="Filtros de categorización de artículos"
                 ></div>
               </div>
@@ -262,9 +243,7 @@
           <div class="instructions__grid scroll-reveal scroll-reveal-container">
             <div class="instruction-step">
               <div class="instruction-step__icon-box">
-                <span class="material-symbols-outlined instruction-step__icon"
-                  >search</span
-                >
+                <svg class="instruction-step__icon" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
               </div>
               <div class="instruction-step__text-box">
                 <h3 class="instruction-step__title">1. Explora</h3>
@@ -277,9 +256,7 @@
 
             <div class="instruction-step">
               <div class="instruction-step__icon-box">
-                <span class="material-symbols-outlined instruction-step__icon"
-                  >shopping_cart_checkout</span
-                >
+                <svg class="header__action-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
               </div>
               <div class="instruction-step__text-box">
                 <h3 class="instruction-step__title">2. Revisa</h3>
@@ -292,9 +269,7 @@
 
             <div class="instruction-step">
               <div class="instruction-step__icon-box">
-                <span class="material-symbols-outlined instruction-step__icon"
-                  >edit_note</span
-                >
+                <svg class="instruction-step__icon" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg>
               </div>
               <div class="instruction-step__text-box">
                 <h3 class="instruction-step__title">3. Completa</h3>
@@ -307,9 +282,7 @@
 
             <div class="instruction-step">
               <div class="instruction-step__icon-box">
-                <span class="material-symbols-outlined instruction-step__icon"
-                  >send</span
-                >
+                <svg class="instruction-step__icon" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
               </div>
               <div class="instruction-step__text-box">
                 <h3 class="instruction-step__title">4. Envía</h3>
@@ -322,9 +295,7 @@
 
             <div class="instruction-step">
               <div class="instruction-step__icon-box">
-                <span class="material-symbols-outlined instruction-step__icon"
-                  >check_circle</span
-                >
+                <svg class="instruction-step__icon" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
               </div>
               <div class="instruction-step__text-box">
                 <h3 class="instruction-step__title">5. Confirma</h3>
@@ -348,11 +319,7 @@
           <div class="checkout__card scroll-reveal">
             <h2 class="checkout__title">Datos &amp; Resumen de tu Pedido</h2>
 
-            <form
-              id="order-form"
-              onsubmit="event.preventDefault()"
-              class="checkout__form-grid"
-            >
+            <form id="order-form" onsubmit="event.preventDefault(); sendOrderToWhatsApp();" class="checkout__form-grid">
               <!-- Left panel: client credentials -->
               <div class="checkout__inputs-panel">
                 <h3 class="checkout__subheading">1. Detalles del Cliente</h3>
@@ -529,22 +496,17 @@
           <h3 class="footer__heading">Vías de Contacto</h3>
           <ul class="footer__contact-list">
             <li class="footer__contact-item">
-              <span class="material-symbols-outlined footer__contact-icon"
-                >location_on</span
-              >
+              <svg class="footer__contact-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+              
               <span>Ciudad de Holguín, Holguín</span>
             </li>
             <li class="footer__contact-item">
-              <span class="material-symbols-outlined footer__contact-icon"
-                >call</span
-              >
+              <svg class="footer__contact-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
               <span>+53 53782767</span>
             </li>
             <li class="footer__contact-item">
-              <span class="material-symbols-outlined footer__contact-icon"
-                >mail</span
-              >
-              <span>laly020730@gamil.com</span>
+              <svg class="footer__contact-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
+              <span>laly020730@gmail.com</span>
             </li>
           </ul>
         </div>
@@ -622,7 +584,7 @@
           onclick="toggleMobileMenu()"
           aria-label="Cerrar menú"
         >
-          <span class="material-symbols-outlined">close</span>
+          <svg width="24" height="24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
@@ -632,28 +594,28 @@
           onclick="toggleMobileMenu()"
           class="mobile-menu-sidebar__link"
         >
-          <span class="material-symbols-outlined">home</span> Inicio
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg> Inicio
         </a>
         <a
           href="#catalog"
           onclick="toggleMobileMenu()"
           class="mobile-menu-sidebar__link"
         >
-          <span class="material-symbols-outlined">grid_view</span> Catálogo
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg> Catálogo
         </a>
         <a
           href="#how-to-order"
           onclick="toggleMobileMenu()"
           class="mobile-menu-sidebar__link"
         >
-          <span class="material-symbols-outlined">help_center</span> Cómo Pedir
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/></svg> Cómo Pedir
         </a>
         <a
           href="#checkout"
           onclick="toggleMobileMenu()"
           class="mobile-menu-sidebar__link"
         >
-          <span class="material-symbols-outlined">assignment</span> Datos del
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Datos del
           Pedido
         </a>
       </nav>
@@ -668,7 +630,7 @@
             toggleCart();
           "
         >
-          <span class="material-symbols-outlined">shopping_bag</span>
+          <svg class="header__action-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
           <span>Ver Carrito</span>
           <span
             id="mobile-menu-cart-badge"
@@ -714,7 +676,7 @@
           onclick="toggleCart()"
           aria-label="Close cart contents drawer"
         >
-          <span class="material-symbols-outlined">close</span>
+          <svg width="24" height="24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
@@ -727,7 +689,7 @@
       <div class="cart-sidebar__footer">
         <div class="cart-sidebar__summary">
           <span class="cart-sidebar__label">Subtotal estimado:</span>
-          <span id="cart-total" class="cart-sidebar__total">$0.00</span>
+          <span id="cart-total" class="cart-sidebar__total"0.00 CUP</span>
         </div>
         <button
           class="cart-sidebar__checkout-btn"
@@ -745,10 +707,10 @@
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
   
     <!-- Product Modal -->
-    <dialog id="product-modal" class="product-modal">
+    <dialog id="product-modal" class="product-modal" aria-labelledby="modal-title">
       <div class="product-modal__content">
         <button class="product-modal__close" id="close-modal" aria-label="Cerrar modal">
-          <span class="material-symbols-outlined">close</span>
+          <svg width="24" height="24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
         </button>
         <img id="modal-img" src="" alt="Producto" class="product-modal__img">
         <div class="product-modal__body">
