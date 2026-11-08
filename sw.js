@@ -1,4 +1,4 @@
-const CACHE_NAME = 'regala-bonito-v1';
+const CACHE_NAME = 'regala-bonito-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
