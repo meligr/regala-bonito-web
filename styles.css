@@ -372,7 +372,11 @@ textarea:focus-visible {
   z-index: 10;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(11, 9, 8, 0.2) 0%, rgba(11, 9, 8, 0.85) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(11, 9, 8, 0.2) 0%,
+    rgba(11, 9, 8, 0.85) 100%
+  );
 }
 
 .hero__image {
@@ -430,7 +434,7 @@ textarea:focus-visible {
   color: #eae2d8;
   opacity: 0.95;
   animation: heroTextReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); 
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .hero__button {
@@ -1309,12 +1313,45 @@ textarea:focus-visible {
   object-fit: cover;
 }
 
-.footer__copyright {
+/* ===== FOOTER BOTTOM (Legal y Copyright) ===== */
+.footer__bottom {
   border-top: 1px solid rgba(199, 190, 162, 0.15);
-  padding: 1.25rem 1rem;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  text-align: center;
+}
+
+.footer__legal-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.footer__legal-links a {
+  color: var(--color-on-surface-muted);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.footer__legal-links a:hover {
+  color: var(--color-primary);
+}
+
+.footer__separator {
+  color: var(--color-outline);
+  font-size: 0.75rem;
+}
+
+.footer__copyright {
+  border-top: none !important;
+  padding: 0 !important;
   font-size: 0.75rem;
   color: var(--color-on-surface-muted);
-  text-align: center;
+  letter-spacing: 0.05em;
 }
 
 /* ===== MOBILE NAVIGATION MENU DRAWER SYSTEM ===== */
@@ -2038,8 +2075,8 @@ textarea:focus-visible {
 
 .header--transparent .header__cart-button:hover {
   background-color: rgba(255, 255, 255, 0.18) !important;
-  border-color: var(--color-primary-gold) !important;
-  color: var(--color-primary-gold) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .header--transparent .header__mobile-menu-trigger {
@@ -2360,6 +2397,6 @@ a,
 @media (max-width: 767px) {
   .hero__image {
     /* En móvil, enfoca la parte inferior de la imagen donde hay más detalle */
-    object-position: center 70%; 
+    object-position: center 70%;
   }
 }
